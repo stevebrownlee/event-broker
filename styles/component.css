@@ -1,0 +1,28 @@
+.component {
+    display: block;
+    background: #D1E5E1;
+    border: 1px double gray;
+    padding: 0.25rem;
+    min-height: 10rem;
+    font-size: large;
+    margin-bottom: 1vh;
+    width: 10rem;
+    position: absolute;
+    top: 3em;
+    left: 3em;
+    text-align: center;
+}
+
+.component--high {
+    background: #B4DC47;
+}
+
+.component--medium {
+    background: #F4C141;
+
+}
+
+.component--low {
+    background: #F08080;
+
+}
