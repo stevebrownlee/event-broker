@@ -61,6 +61,7 @@ body
 .elements {
     flex: 1;
     background: whitesmoke;
+    max-width: 200px;
 }
 
 .canvas {
