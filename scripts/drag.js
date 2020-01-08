@@ -32,13 +32,10 @@ export const drag = (elmnt) => {
         pos3 = e.clientX
         pos4 = e.clientY
 
-
-        console.log(elmnt.offsetLeft + elmnt.offsetWidth, elmnt.parentNode.offsetWidth)
         const currentLeft = elmnt.offsetLeft + elmnt.offsetWidth
         const currentTop = elmnt.offsetTop + elmnt.offsetHeight
         const parentWidth = elmnt.parentNode.offsetWidth - 20
         const parentHeight = elmnt.parentNode.offsetHeight - 20
-
 
         if (elmnt.offsetTop >= 20 && currentTop <= parentHeight) {
             elmnt.style.top = (elmnt.offsetTop - pos2) + "px"

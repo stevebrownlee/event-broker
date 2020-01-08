@@ -42,7 +42,7 @@ export const makeComponent = () => {
     const card = document.createElement("section")
     card.classList = `component component--high`
     card.draggable = true
-    card.id = `component--1`
+    card.id = `component--${count}`
     card.addEventListener("click", e => e.target.focus())
 
     card.appendChild(header)
@@ -54,7 +54,29 @@ export const makeComponent = () => {
     count++
 
     drag(card)
+
+}
+
+const connectComponents = () => {
+    const elements = document.querySelectorAll(".component")
+    const components = [...elements]
+
+    components.reduce((c, n) => {
+        new LeaderLine(
+            c,
+            n,
+            {
+                dash: {
+                    animation: true
+                }
+            }
+        )
+        return n
+    })
 }
 
 const add = document.querySelector("#addComponent")
+const connect = document.querySelector("#connectThem")
+
 add.addEventListener("click", makeComponent)
+connect.addEventListener("click", connectComponents)
