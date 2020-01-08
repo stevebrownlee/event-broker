@@ -4,13 +4,14 @@
     border: 1px double gray;
     padding: 0.25rem;
     min-height: 10rem;
-    font-size: large;
+    font-size: 0.9rem;
     margin-bottom: 1vh;
     width: 10rem;
     position: absolute;
     top: 3em;
     left: 3em;
     text-align: center;
+    color: rgb(121, 126, 120);
 }
 
 .component--high {
@@ -25,4 +26,27 @@
 .component--low {
     background: #F08080;
 
+}
+
+.component__header {
+    padding: 0 0 0.25em 0;
+    border-bottom: 1px solid lightslategray;
+}
+
+.component__description {
+    padding: 0.25em 0 0.25em 0;
+    border-bottom: 1px solid lightslategray;
+}
+
+.component__publish {
+    padding: 0.25em;
+    border-bottom: 1px solid lightslategray;
+}
+
+.component__subscribe {
+    padding: 0.25em;
+}
+
+.edited {
+    color: darkslategray;
 }
