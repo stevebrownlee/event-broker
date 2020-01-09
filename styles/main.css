@@ -1,3 +1,4 @@
+@import './elements.css';
 @import './buttons.css';
 @import './component.css';
 
@@ -56,12 +57,6 @@ body
     align-items: stretch; /* align items in Cross Axis */
     align-content: stretch; /* Extra space in Cross Axis */
 
-}
-
-.elements {
-    flex: 1;
-    background: whitesmoke;
-    max-width: 200px;
 }
 
 .canvas {

@@ -1,0 +1,15 @@
+.elements {
+    flex: 1;
+    background: whitesmoke;
+    max-width: 200px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.element {
+    flex-basis: 40%;
+    height: 2em;
+    cursor: pointer;
+    text-align: center;
+}

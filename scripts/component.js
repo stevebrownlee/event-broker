@@ -57,7 +57,6 @@ export const component = Object.create(null, {
                 count++
 
                 drag(card)
-
             }
 
             const connectComponents = () => {
