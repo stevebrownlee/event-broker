@@ -1,0 +1,15 @@
+.broker {
+    background-color: rgb(88, 177, 218);
+    padding: 2em;
+    border-radius: 50%;
+    width: 10em;
+    height: 10em;
+    position: absolute;
+    left:50%;
+    top:50%;
+    margin-left:-3em;
+    margin-top:-8em;
+    text-align: center;
+    line-height: 5em;
+    border: 0.5em dashed darkcyan
+}

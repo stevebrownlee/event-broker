@@ -8,6 +8,13 @@ export const component = Object.create(null, {
         value: () => {
             const makeComponent = () => {
 
+                const card = document.createElement("section")
+                card.classList = `component component--high`
+                card.draggable = true
+                card.id = `component--${count}`
+                card.addEventListener("click", e => e.target.focus())
+
+
                 const header = document.createElement("header")
                 header.className = "component__header"
                 header.textContent = "Component"
@@ -36,17 +43,19 @@ export const component = Object.create(null, {
                 publish.className = "component__publish"
                 publish.textContent = "Publishes"
                 publish.contentEditable = true
+                publish.onmousedown = (e) => {
+                    console.log("Mouse down publish", card)
+                    card.draggable = false
+                }
+                window.onmouseup = (e) => {
+                    card.draggable = true
+                }
+
 
                 const subscribe = document.createElement("div")
                 subscribe.className = "component__subscribe"
                 subscribe.textContent = "Subscribes"
                 subscribe.contentEditable = true
-
-                const card = document.createElement("section")
-                card.classList = `component component--high`
-                card.draggable = true
-                card.id = `component--${count}`
-                card.addEventListener("click", e => e.target.focus())
 
                 card.appendChild(header)
                 card.appendChild(description)
@@ -64,11 +73,12 @@ export const component = Object.create(null, {
                 const components = [...elements]
 
                 components.reduce((c, n) => {
-                    new LeaderLine( c, n,
+                    new LeaderLine( c, LeaderLine.areaAnchor(n),
                         {
                             dash: {
                                 animation: true
-                            }
+                            },
+                            middleLabel: 'eventName'
                         }
                     )
                     return n

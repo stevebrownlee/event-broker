@@ -1,15 +1,9 @@
 const canvas = document.querySelector('.canvas')
 
-export const drag = (elmnt) => {
+export const drag = (el) => {
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0
 
-    if (document.getElementById(elmnt.id + "header")) {
-        // if present, the header is where you move the DIV from:
-        document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown
-    } else {
-        // otherwise, move the DIV from anywhere inside the DIV:
-        elmnt.onmousedown = dragMouseDown
-    }
+    el.onmousedown = dragMouseDown
 
     function dragMouseDown(e) {
         e = e || window.event
@@ -32,29 +26,29 @@ export const drag = (elmnt) => {
         pos3 = e.clientX
         pos4 = e.clientY
 
-        const currentLeft = elmnt.offsetLeft + elmnt.offsetWidth
-        const currentTop = elmnt.offsetTop + elmnt.offsetHeight
-        const parentWidth = elmnt.parentNode.offsetWidth - 20
-        const parentHeight = elmnt.parentNode.offsetHeight - 20
+        const currentLeft = el.offsetLeft + el.offsetWidth
+        const currentTop = el.offsetTop + el.offsetHeight
+        const parentWidth = el.parentNode.offsetWidth - 20
+        const parentHeight = el.parentNode.offsetHeight - 20
 
-        if (elmnt.offsetTop >= 20 && currentTop <= parentHeight) {
-            elmnt.style.top = (elmnt.offsetTop - pos2) + "px"
+        if (el.offsetTop >= 20 && currentTop <= parentHeight) {
+            el.style.top = (el.offsetTop - pos2) + "px"
         } else {
-            if (elmnt.offsetTop <= 20) {
-                elmnt.style.top = "20px"
+            if (el.offsetTop <= 20) {
+                el.style.top = "20px"
             } else {
-                elmnt.style.top = `${parentHeight - elmnt.offsetHeight}px`
+                el.style.top = `${parentHeight - el.offsetHeight}px`
             }
         }
 
 
-        if (elmnt.offsetLeft >= 20 && currentLeft <= parentWidth) {
-            elmnt.style.left = (elmnt.offsetLeft - pos1) + "px"
+        if (el.offsetLeft >= 20 && currentLeft <= parentWidth) {
+            el.style.left = (el.offsetLeft - pos1) + "px"
         } else {
-            if (elmnt.offsetLeft <= 20) {
-                elmnt.style.left = "20px"
+            if (el.offsetLeft <= 20) {
+                el.style.left = "20px"
             } else {
-                elmnt.style.left = `${parentWidth - elmnt.offsetWidth}px`
+                el.style.left = `${parentWidth - el.offsetWidth}px`
             }
         }
 
@@ -62,7 +56,7 @@ export const drag = (elmnt) => {
 
     }
 
-    function closeDragElement (e) {
+    function closeDragElement(e) {
         console.log("closeDragElement")
         document.onmouseup = null
         document.onmousemove = null
