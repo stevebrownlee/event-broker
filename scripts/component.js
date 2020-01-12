@@ -1,6 +1,9 @@
 import { drag } from "./drag.js"
 import { useColors } from "./colorProvider.js"
 import { useEvents } from "./eventNameProvider.js"
+import { createHeader } from "./componentHeaderFactory.js"
+import { createDescription } from "./componentDescriptionFactory.js"
+import { createPublishArea } from "./componentPublishFactory.js"
 
 let count = 1
 const canvas = document.querySelector('.canvas')
@@ -17,74 +20,31 @@ export const ComponentFactory = Object.create(null, {
                 card.id = `component--${count}`
                 card.addEventListener("dblclick", e => e.target.focus())
 
+                card.ondragover = e => e.preventDefault()
 
-                const header = document.createElement("header")
-                header.className = "component__header"
-                header.textContent = "Component"
-                header.contentEditable = true
-                header.addEventListener("blur", function (e) {
-                    let name = e.target.textContent
-                    if (name === "") {
-                        e.target.textContent = "Component"
+                card.ondrop = e => {
+                    console.log("Listener identified")
+                    // Enabled dropping on targets
+                    e.preventDefault()
+
+                    // Determine what's being dropped
+                    const data = e.dataTransfer.getData("eventName")
+
+                    // Can only drop cards in column components
+                    let dropTarget = null
+                    if (e.target.className.includes("component")) {
+                        dropTarget = e.target.parentElement
                     }
-                })
-                header.addEventListener("dblclick", function (e) {
-                    const name = e.target.textContent
-                    e.target.textContent = name === "Component" ? "" : name
-                })
-                header.addEventListener("keypress", function (e) {
-                    e.target.classList.add("edited")
-                    if (e.keyCode === 13) {
-                        if (e.target.textContent === "") {
-                            e.target.textContent = "Component"
-                        }
-                        e.target.blur()
-                        e.stopPropagation()
-                        e.preventDefault()
-                        e.returnValue = false
-                        return false
-                    }
-                })
 
-                const description = document.createElement("div")
-                description.className = "component__description"
-                description.textContent = "Responsibility"
+                    // Append card to target column as child
+                    console.log(document.getElementById(data).textContent)
 
-                description.addEventListener("dblclick", function (e) {
-                    const name = e.target.textContent
-                    e.target.textContent = name === "Resposibility" ? "" : name
-                    description.contentEditable = true
-                })
-                description.addEventListener("keypress", function (e) {
-                    e.target.classList.add("edited")
-                    if (e.keyCode === 13) {
-                        if (e.target.textContent === "") {
-                            e.target.textContent = "Resposibility"
-                        }
-                        description.contentEditable = true
-                        e.target.blur()
-                        e.stopPropagation()
-                        e.preventDefault()
-                        e.returnValue = false
-                        return false
-                    }
-                })
-
-                const publish = document.createElement("div")
-                publish.className = "component__publish"
-                publish.innerHTML = "<button class='btn fakeLink'>Add Event</button>"
-                publish.contentEditable = true
-                publish.onmousedown = (e) => {
-                    card.draggable = false
-                }
-                window.onmouseup = (e) => {
-                    card.draggable = true
+                    // Update task's `column` property
                 }
 
-
-                card.appendChild(header)
-                card.appendChild(description)
-                card.appendChild(publish)
+                card.appendChild(createHeader(card))
+                card.appendChild(createDescription(card))
+                card.appendChild(createPublishArea(card))
                 canvas.appendChild(card)
                 count++
 
@@ -103,7 +63,6 @@ export const ComponentFactory = Object.create(null, {
                         randomListener = [...document.querySelectorAll(".component")].random()
                     } while (randomListener === c)
 
-                    // const randomListener = [...document.querySelectorAll(".component")].random()
                     const randomColor = colors.random()
                     const randomEvent = useEvents().random()
 
@@ -111,8 +70,6 @@ export const ComponentFactory = Object.create(null, {
                     event.style.backgroundRepeat = 'no-repeat'
                     event.style.backgroundPosition = "right 2px top 2px"
                     event.style.backgroundSize = "0.75em 0.75em"
-
-
 
                     const outgoing = new LeaderLine(
                         c,
@@ -144,13 +101,6 @@ export const ComponentFactory = Object.create(null, {
                         outgoing.hide()
                         incoming.hide()
                     })
-                    // new LeaderLine(c, broker,
-                    //     {
-                    //         dash: { animation: true },
-                    //         color: colors.random(),
-                    //         middleLabel: 'eventName'
-                    //     }
-                    // )
                 })
             }
 
