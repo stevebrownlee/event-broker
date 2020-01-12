@@ -22,7 +22,13 @@ export const createPublishArea = (card) => {
                 publish.appendChild(createEventContainer())
             } else {
                 publish.draggable = true
-                publish.ondragstart = e => e.dataTransfer.setData("eventName", publish.id)
+                publish.ondragstart = e => {
+                    const details = {
+                        eventName: publish.textContent,
+                        publisher: publish.id
+                    }
+                    e.dataTransfer.setData("details", JSON.stringify(details))
+                }
                 drag(publish)
             }
             publish.contentEditable = false

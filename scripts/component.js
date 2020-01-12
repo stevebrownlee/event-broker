@@ -28,7 +28,7 @@ export const ComponentFactory = Object.create(null, {
                     e.preventDefault()
 
                     // Determine what's being dropped
-                    const data = e.dataTransfer.getData("eventName")
+                    const details = JSON.parse(e.dataTransfer.getData("details"))
 
                     // Can only drop cards in column components
                     let dropTarget = null
@@ -36,8 +36,11 @@ export const ComponentFactory = Object.create(null, {
                         dropTarget = e.target.parentElement
                     }
 
-                    // Append card to target column as child
-                    console.log(document.getElementById(data).textContent)
+                    connectComponents(
+                        document.getElementById(details.publisher),
+                        e.target,
+                        details.eventName
+                    )
 
                     // Update task's `column` property
                 }
@@ -51,53 +54,52 @@ export const ComponentFactory = Object.create(null, {
                 drag(card)
             }
 
-            const connectComponents = () => {
+            const connectComponents = (publisher, subscriber, eventName) => {
                 const broker = document.querySelector(".broker")
                 const components = [...document.querySelectorAll(".component")]
 
                 components.forEach(c => {
-                    const event = c.querySelector(".component__publish")
 
-                    let randomListener = null
-                    do {
-                        randomListener = [...document.querySelectorAll(".component")].random()
-                    } while (randomListener === c)
+                    // let randomListener = null
+                    // do {
+                    //     randomListener = [...document.querySelectorAll(".component")].random()
+                    // } while (randomListener === c)
 
                     const randomColor = colors.random()
                     const randomEvent = useEvents().random()
 
-                    event.style.backgroundImage = 'url(\'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cG9seWdvbiBwb2ludHM9IjI0LDAgMCw4IDgsMTEgMCwxOSA1LDI0IDEzLDE2IDE2LDI0IiBmaWxsPSJjb3JhbCIvPjwvc3ZnPg==\')'
-                    event.style.backgroundRepeat = 'no-repeat'
-                    event.style.backgroundPosition = "right 2px top 2px"
-                    event.style.backgroundSize = "0.75em 0.75em"
+                    publisher.style.backgroundImage = 'url(\'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cG9seWdvbiBwb2ludHM9IjI0LDAgMCw4IDgsMTEgMCwxOSA1LDI0IDEzLDE2IDE2LDI0IiBmaWxsPSJjb3JhbCIvPjwvc3ZnPg==\')'
+                    publisher.style.backgroundRepeat = 'no-repeat'
+                    publisher.style.backgroundPosition = "right 2px top 2px"
+                    publisher.style.backgroundSize = "0.75em 0.75em"
 
                     const outgoing = new LeaderLine(
-                        c,
+                        publisher,
                         broker,
                         {
                             dash: { animation: true },
                             color: randomColor,
-                            middleLabel: randomEvent,
+                            middleLabel: eventName,
                             hide: true
                         }
                     )
                     const incoming = new LeaderLine(
                         broker,
-                        randomListener,
+                        subscriber,
                         {
                             dash: { animation: true },
                             color: randomColor,
-                            middleLabel: randomEvent,
+                            middleLabel: eventName,
                             hide: true
                         }
                     )
 
-                    event.addEventListener("mouseover", e => {
+                    publisher.addEventListener("mouseover", e => {
                         outgoing.show()
                         incoming.show()
                     })
 
-                    event.addEventListener("mouseout", e => {
+                    publisher.addEventListener("mouseout", e => {
                         outgoing.hide()
                         incoming.hide()
                     })
