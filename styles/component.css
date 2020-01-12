@@ -2,7 +2,6 @@
     display: block;
     background: #D1E5E1;
     border: 1px double gray;
-    padding: 0.25rem;
     min-height: 10rem;
     font-size: 0.9rem;
     margin-bottom: 1vh;
@@ -29,24 +28,20 @@
 }
 
 .component__header {
-    padding: 0 0 0.25em 0;
+    padding: 0.4em 0 0.4em 0;
     border-bottom: 1px solid lightslategray;
+    background-color: forestgreen;
+    color: lightgreen;
+    cursor: grab;
 }
 
 .component__description {
-    padding: 0.25em 0 0.25em 0;
+    padding: 0.25em;
     border-bottom: 1px solid lightslategray;
 }
 
 .component__publish {
     padding: 0.25em;
     border-bottom: 1px solid lightslategray;
-}
-
-.component__subscribe {
-    padding: 0.25em;
-}
-
-.edited {
-    color: darkslategray;
+    color: lightseagreen;
 }

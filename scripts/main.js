@@ -1,5 +1,7 @@
-import { component } from "./component.js"
+import { ComponentFactory } from "./component.js"
 import { EventHub } from "./eventhub.js"
+import { Utils } from "./util.js"
 
-component.init()
+ComponentFactory.init()
 EventHub.init()
+Utils.init()

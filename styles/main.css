@@ -62,7 +62,7 @@ body
 
 .canvas {
     flex: 5;
-    background: rgb(255, 183, 183);
+    background: rgb(237, 237, 229);
     position:relative;
 }
 
@@ -96,4 +96,40 @@ body
 
     /* Needed for when the area gets squished too far and there is content that can't be displayed */
     overflow: auto;
+}
+
+
+
+.btn {
+    border-radius: 0.5em;
+    border: 2px solid #0099CC;
+    background: transparent;
+    border: none;
+    color: white;
+    text-align: center;
+    display: inline-block;
+    font-size: 0.8em;
+    max-width: 8em;
+    -webkit-transition-duration: 0.33s;
+    transition-duration: 0.33s;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.fakeLink {
+    background: none!important;
+    border: none;
+    font-family: arial, sans-serif;
+    color: #479cf7d3;
+    text-decoration: none;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.fakeLink:hover {
+    color: #007bff;
+}
+
+.fakeLink:focus {
+    outline: 0;
 }

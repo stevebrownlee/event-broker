@@ -3,7 +3,9 @@ const canvas = document.querySelector('.canvas')
 export const drag = (el) => {
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0
 
-    el.onmousedown = dragMouseDown
+    if (el.firstElementChild.classList.contains("component__header")) {
+        el.firstElementChild.onmousedown = dragMouseDown
+    }
 
     function dragMouseDown(e) {
         e = e || window.event
@@ -57,7 +59,6 @@ export const drag = (el) => {
     }
 
     function closeDragElement(e) {
-        console.log("closeDragElement")
         document.onmouseup = null
         document.onmousemove = null
         canvas.focus()

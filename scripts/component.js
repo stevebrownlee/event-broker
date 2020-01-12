@@ -1,9 +1,11 @@
 import { drag } from "./drag.js"
+import { useColors } from "./colorProvider.js"
 
 let count = 1
 const canvas = document.querySelector('.canvas')
+const colors = useColors()
 
-export const component = Object.create(null, {
+export const ComponentFactory = Object.create(null, {
     init: {
         value: () => {
             const makeComponent = () => {
@@ -12,21 +14,30 @@ export const component = Object.create(null, {
                 card.classList = `component component--high`
                 card.draggable = true
                 card.id = `component--${count}`
-                card.addEventListener("click", e => e.target.focus())
+                card.addEventListener("dblclick", e => e.target.focus())
 
 
                 const header = document.createElement("header")
                 header.className = "component__header"
                 header.textContent = "Component"
                 header.contentEditable = true
-                header.addEventListener("click", function (e) {
-                    e.target.textContent = ""
-                    e.target.classList.add("edited")
+                header.addEventListener("blur", function (e) {
+                    let name = e.target.textContent
+                    if (name === "") {
+                        e.target.textContent = "Component"
+                    }
+                })
+                header.addEventListener("dblclick", function (e) {
+                    const name = e.target.textContent
+                    e.target.textContent = name === "Component" ? "" : name
                 })
                 header.addEventListener("keypress", function (e) {
-                    console.log(e.keyCode)
                     e.target.classList.add("edited")
                     if (e.keyCode === 13) {
+                        if (e.target.textContent === "") {
+                            e.target.textContent = "Component"
+                        }
+                        e.target.blur()
                         e.stopPropagation()
                         e.preventDefault()
                         e.returnValue = false
@@ -37,14 +48,32 @@ export const component = Object.create(null, {
                 const description = document.createElement("div")
                 description.className = "component__description"
                 description.textContent = "Responsibility"
-                description.contentEditable = true
+
+                description.addEventListener("dblclick", function (e) {
+                    const name = e.target.textContent
+                    e.target.textContent = name === "Resposibility" ? "" : name
+                    description.contentEditable = true
+                })
+                description.addEventListener("keypress", function (e) {
+                    e.target.classList.add("edited")
+                    if (e.keyCode === 13) {
+                        if (e.target.textContent === "") {
+                            e.target.textContent = "Resposibility"
+                        }
+                        description.contentEditable = true
+                        e.target.blur()
+                        e.stopPropagation()
+                        e.preventDefault()
+                        e.returnValue = false
+                        return false
+                    }
+                })
 
                 const publish = document.createElement("div")
                 publish.className = "component__publish"
-                publish.textContent = "Publishes"
+                publish.innerHTML = "<button class='btn fakeLink'>Add Event</button>"
                 publish.contentEditable = true
                 publish.onmousedown = (e) => {
-                    console.log("Mouse down publish", card)
                     card.draggable = false
                 }
                 window.onmouseup = (e) => {
@@ -52,16 +81,9 @@ export const component = Object.create(null, {
                 }
 
 
-                const subscribe = document.createElement("div")
-                subscribe.className = "component__subscribe"
-                subscribe.textContent = "Subscribes"
-                subscribe.contentEditable = true
-
                 card.appendChild(header)
                 card.appendChild(description)
                 card.appendChild(publish)
-                card.appendChild(subscribe)
-
                 canvas.appendChild(card)
                 count++
 
@@ -69,19 +91,19 @@ export const component = Object.create(null, {
             }
 
             const connectComponents = () => {
-                const elements = document.querySelectorAll(".component")
-                const components = [...elements]
+                const broker = document.querySelector(".broker")
+                const components = [...document.querySelectorAll(".component")]
 
-                components.reduce((c, n) => {
-                    new LeaderLine( c, LeaderLine.areaAnchor(n),
+                components.forEach(c => {
+                    new LeaderLine(c, broker,
                         {
                             dash: {
                                 animation: true
                             },
+                            color: colors.random(),
                             middleLabel: 'eventName'
                         }
                     )
-                    return n
                 })
             }
 
