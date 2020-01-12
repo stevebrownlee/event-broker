@@ -53,9 +53,6 @@ export const drag = (el) => {
                 el.style.left = `${parentWidth - el.offsetWidth}px`
             }
         }
-
-
-
     }
 
     function closeDragElement(e) {
