@@ -1,25 +1,54 @@
 import { useColors } from "./colorProvider.js"
 
 const connections = new WeakMap()
+const eventHub = document.querySelector(".container")
 let broker = null
 
 export const reconnectComponents = component => {
-    if (connections.has(component)) {
+    if (
+        !connections.has(component) ||
+        (connections.has(component) && connections.get(component).isPublisher)) {
+
+        const allPublishedEvents = component.querySelectorAll(".component__publish")
+
+        for (const eventEl of allPublishedEvents) {
+            if (connections.has(eventEl)) {
+                const target = connections.get(eventEl)
+                target.line.remove()
+
+                eventEl.removeEventListener("mouseout", target.mouseout)
+                eventEl.removeEventListener("mouseover", target.mouseover)
+
+                const { outgoingLine,
+                    outgoingMouseOver,
+                    outgoingMouseOut } = drawPublisherToBroker(eventEl, target.event, target.color)
+                target.line = outgoingLine
+
+                eventEl.addEventListener("mouseover", outgoingMouseOver)
+                eventEl.addEventListener("mouseout", outgoingMouseOut)
+            }
+        }
+    }
+
+    if (connections.has(component) && connections.get(component).isSubscriber) {
         const target = connections.get(component)
         target.line.remove()
 
-        let newLine = null
-        if (target.publish) {
-            newLine = drawPublisherToBroker(component.querySelector(".component__publish"), target.event, target.color)
-        } else {
-            newLine = drawBrokerToSubscriber(component, target.publisher, target.event, target.color)
-        }
-        target.line = newLine
+        component.removeEventListener("mouseout", target.mouseout)
+        component.removeEventListener("mouseover", target.mouseover)
+
+        const { incomingLine,
+            incomingMouseOver,
+            incomingMouseOut } = drawBrokerToSubscriber(component, target.publisher, target.event, target.color)
+        target.line = incomingLine
+
+        component.addEventListener("mouseover", incomingMouseOver)
+        component.addEventListener("mouseout", incomingMouseOut)
     }
 }
 
 const drawPublisherToBroker = (publisher, eventName, color) => {
-    const outgoing = new LeaderLine(
+    const outgoingLine = new LeaderLine(
         publisher,
         broker,
         {
@@ -30,19 +59,23 @@ const drawPublisherToBroker = (publisher, eventName, color) => {
         }
     )
 
-    publisher.addEventListener("mouseover", e => {
-        outgoing.show()
-    })
+    const outgoingMouseOut = e => {
+        console.log("outgoingMouseOut")
+        outgoingLine.hide()
+    }
+    const outgoingMouseOver = e => {
+        console.log("outgoingMouseOver")
+        outgoingLine.show()
+    }
 
-    publisher.addEventListener("mouseout", e => {
-        outgoing.hide()
-    })
+    publisher.addEventListener("mouseover", outgoingMouseOver)
+    publisher.addEventListener("mouseout", outgoingMouseOut)
 
-    return outgoing
+    return { outgoingLine, outgoingMouseOver, outgoingMouseOut }
 }
 
 const drawBrokerToSubscriber = (subscriber, publisher, eventName, color) => {
-    const incoming = new LeaderLine(
+    const incomingLine = new LeaderLine(
         broker,
         subscriber,
         {
@@ -53,15 +86,19 @@ const drawBrokerToSubscriber = (subscriber, publisher, eventName, color) => {
         }
     )
 
-    publisher.addEventListener("mouseover", e => {
-        incoming.show()
-    })
+    const incomingMouseOut = e => {
+        console.log("incomingMouseOut")
+        incomingLine.hide()
+    }
+    const incomingMouseOver = e => {
+        console.log("incomingMouseOver")
+        incomingLine.show()
+    }
 
-    publisher.addEventListener("mouseout", e => {
-        incoming.hide()
-    })
+    publisher.addEventListener("mouseover", incomingMouseOver)
+    publisher.addEventListener("mouseout", incomingMouseOut)
 
-    return incoming
+    return { incomingLine, incomingMouseOver, incomingMouseOut }
 }
 
 const drawConnection = (publisher, subscriber, eventName, color) => {
@@ -70,51 +107,68 @@ const drawConnection = (publisher, subscriber, eventName, color) => {
     publisher.style.backgroundPosition = "right 2px top 2px"
     publisher.style.backgroundSize = "0.75em 0.75em"
 
-    let outgoing = null
     broker = document.querySelector(".broker")
 
+    let outgoingLine = null
+    let outgoingMouseOver = null
+    let outgoingMouseOut = null
+
     if (!connections.has(publisher.parentNode)) {
-        outgoing = drawPublisherToBroker(publisher, eventName, color)
+        const out = drawPublisherToBroker(publisher, eventName, color)
+        outgoingLine = out.outgoingLine
+        outgoingMouseOver = out.outgoingMouseOver
+        outgoingMouseOut = out.outgoingMouseOut
     }
-    const incoming = drawBrokerToSubscriber(subscriber, publisher, eventName, color)
+    const { incomingLine, incomingMouseOver, incomingMouseOut } = drawBrokerToSubscriber(subscriber, publisher, eventName, color)
 
-    publisher.addEventListener("mouseover", e => {
-        outgoing && outgoing.show()
-        incoming.show()
-    })
-
-    publisher.addEventListener("mouseout", e => {
-        outgoing && outgoing.hide()
-        incoming.hide()
-    })
-
-    return {incoming, outgoing}
+    return {
+        incomingLine,
+        incomingMouseOver,
+        incomingMouseOut,
+        outgoingLine,
+        outgoingMouseOver,
+        outgoingMouseOut
+    }
 }
 
 export const connectComponents = (publisher, subscriber, eventName) => {
-    const publishingComponent = publisher.parentNode
     const color = useColors().random()
-    const lines = drawConnection(publisher, subscriber, eventName, color)
+    const {
+        incomingLine,
+        incomingMouseOver,
+        incomingMouseOut,
+        outgoingLine,
+        outgoingMouseOver,
+        outgoingMouseOut
+    } = drawConnection(publisher, subscriber, eventName, color)
 
-    if (!connections.has(publishingComponent)) {
+    if (!connections.has(publisher)) {
         // TODO: Change value to map
-        connections.set(publishingComponent, {
+        connections.set(publisher, {
             color: color,
             event: eventName,
-            publish: true,
-            line: lines.outgoing,
+            isSubscriber: false,
+            isPublisher: true,
+            line: outgoingLine,
+            mouseout: outgoingMouseOut,
+            mouseover: outgoingMouseOver,
             publisher: null
         })
     }
+    connections.get(publisher).isPublisher = true
 
     if (!connections.has(subscriber)) {
         // TODO: Change value to map
         connections.set(subscriber, {
             color: color,
             event: eventName,
-            publish: false,
-            line: lines.incoming,
+            isSubscriber: true,
+            isPublisher: false,
+            line: incomingLine,
+            mouseout: incomingMouseOut,
+            mouseover: incomingMouseOver,
             publisher: publisher
         })
     }
+    connections.get(subscriber).isSubscriber = true
 }

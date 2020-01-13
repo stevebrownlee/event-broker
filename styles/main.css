@@ -27,8 +27,7 @@ body
 
 }
 
-.flexbox-parent
-{
+.container {
     width: 100%;
     height: 100%;
 
