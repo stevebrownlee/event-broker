@@ -1,16 +1,20 @@
 import { useColors } from "./colorProvider.js"
 
 const connections = new WeakMap()
-const broker = null
+let broker = null
 
 export const reconnectComponents = component => {
     if (connections.has(component)) {
         const target = connections.get(component)
+        target.line.remove()
+
+        let newLine = null
         if (target.publish) {
-            drawPublisherToBroker(target, target.event, target.color)
+            newLine = drawPublisherToBroker(component, target.event, target.color)
         } else {
-            drawBrokerToSubscriber(target, target.event, target.color)
+            newLine = drawBrokerToSubscriber(component, target.publisher, target.event, target.color)
         }
+        target.line = newLine
     }
 }
 
@@ -26,10 +30,18 @@ const drawPublisherToBroker = (publisher, eventName, color) => {
         }
     )
 
+    publisher.addEventListener("mouseover", e => {
+        outgoing.show()
+    })
+
+    publisher.addEventListener("mouseout", e => {
+        outgoing.hide()
+    })
+
     return outgoing
 }
 
-const drawBrokerToSubscriber = (subscriber, eventName, color) => {
+const drawBrokerToSubscriber = (subscriber, publisher, eventName, color) => {
     const incoming = new LeaderLine(
         broker,
         subscriber,
@@ -40,6 +52,14 @@ const drawBrokerToSubscriber = (subscriber, eventName, color) => {
             hide: true
         }
     )
+
+    publisher.addEventListener("mouseover", e => {
+        incoming.show()
+    })
+
+    publisher.addEventListener("mouseout", e => {
+        incoming.hide()
+    })
 
     return incoming
 }
@@ -56,7 +76,7 @@ const drawConnection = (publisher, subscriber, eventName, color) => {
     if (!connections.has(publisher.parentNode)) {
         outgoing = drawPublisherToBroker(publisher, eventName, color)
     }
-    const incoming = drawBrokerToSubscriber(subscriber, eventName, color)
+    const incoming = drawBrokerToSubscriber(subscriber, publisher, eventName, color)
 
     publisher.addEventListener("mouseover", e => {
         outgoing && outgoing.show()
@@ -67,18 +87,34 @@ const drawConnection = (publisher, subscriber, eventName, color) => {
         outgoing && outgoing.hide()
         incoming.hide()
     })
+
+    return {incoming, outgoing}
 }
 
 export const connectComponents = (publisher, subscriber, eventName) => {
     const publishingComponent = publisher.parentNode
     const color = useColors().random()
+    const lines = drawConnection(publisher, subscriber, eventName, color)
 
     if (!connections.has(publishingComponent)) {
-        drawConnection(publisher, subscriber, eventName, color)
-        connections.set(publishingComponent, { color: color, event: eventName, publish: true })
+        // TODO: Change value to map
+        connections.set(publishingComponent, {
+            color: color,
+            event: eventName,
+            publish: true,
+            line: lines.outgoing,
+            publisher: null
+        })
     }
 
     if (!connections.has(subscriber)) {
-        connections.set(subscriber, { color: color, event: eventName, publish: false })
+        // TODO: Change value to map
+        connections.set(subscriber, {
+            color: color,
+            event: eventName,
+            publish: false,
+            line: lines.incoming,
+            publisher: publisher
+        })
     }
 }
