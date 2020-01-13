@@ -25,6 +25,8 @@ export const createPublishArea = (card) => {
                 publish.ondragstart = null
                 undrag(publish)
             } else {
+                card.appendChild(createPublishArea(card))
+
                 publish.draggable = true
 
                 publish.ondragstart = e => {
@@ -35,6 +37,7 @@ export const createPublishArea = (card) => {
                     e.dataTransfer.setData("details", JSON.stringify(details))
                 }
                 drag(publish)
+
             }
             publish.contentEditable = false
             publish.blur()

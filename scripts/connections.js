@@ -121,7 +121,7 @@ const drawConnection = (publisher, subscriber, eventName, color) => {
     let outgoingMouseOver = null
     let outgoingMouseOut = null
 
-    if (!connections.has(publisher.parentNode)) {
+    if (!connections.has(publisher)) {
         const out = drawPublisherToBroker(publisher, eventName, color)
         outgoingLine = out.outgoingLine
         outgoingMouseOver = out.outgoingMouseOver
@@ -140,7 +140,12 @@ const drawConnection = (publisher, subscriber, eventName, color) => {
 }
 
 export const connectComponents = (publisher, subscriber, eventName) => {
-    const color = useColors().random()
+    let color = useColors().random()
+
+    if (connections.has(publisher)) {
+        color = connections.get(publisher).color
+    }
+
     const {
         incomingLine,
         incomingMouseOver,

@@ -1,5 +1,3 @@
-const listeners = {}
-
 export const Utils = Object.create(null, {
     init: {
         value: () => {
