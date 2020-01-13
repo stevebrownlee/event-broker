@@ -60,12 +60,16 @@ const drawPublisherToBroker = (publisher, eventName, color) => {
     )
 
     const outgoingMouseOut = e => {
-        console.log("outgoingMouseOut")
-        outgoingLine.hide()
+        try {
+            console.log("outgoingMouseOut")
+            outgoingLine.hide()
+        } catch (error) { }
     }
     const outgoingMouseOver = e => {
-        console.log("outgoingMouseOver")
-        outgoingLine.show()
+        try {
+            console.log("outgoingMouseOver")
+            outgoingLine.show()
+        } catch (error) { }
     }
 
     publisher.addEventListener("mouseover", outgoingMouseOver)
@@ -87,12 +91,16 @@ const drawBrokerToSubscriber = (subscriber, publisher, eventName, color) => {
     )
 
     const incomingMouseOut = e => {
-        console.log("incomingMouseOut")
-        incomingLine.hide()
+        try {
+            console.log("incomingMouseOut")
+            incomingLine.hide()
+        } catch (error) { }
     }
     const incomingMouseOver = e => {
-        console.log("incomingMouseOver")
-        incomingLine.show()
+        try {
+            console.log("incomingMouseOver")
+            incomingLine.show()
+        } catch (error) { }
     }
 
     publisher.addEventListener("mouseover", incomingMouseOver)
