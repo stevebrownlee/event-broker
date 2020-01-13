@@ -1,15 +1,15 @@
 .elements {
-    flex: 1;
     background: whitesmoke;
-    max-width: 200px;
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: left;
 }
 
 .element {
-    flex-basis: 40%;
-    height: 2em;
+    flex-basis: 20%;
     cursor: pointer;
-    text-align: center;
+}
+
+.logo {
+    font-size: 1.5em;
 }

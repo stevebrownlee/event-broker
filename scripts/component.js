@@ -1,19 +1,16 @@
 import { drag } from "./drag.js"
-import { useColors } from "./colorProvider.js"
-import { useEvents } from "./eventNameProvider.js"
 import { createHeader } from "./componentHeaderFactory.js"
 import { createDescription } from "./componentDescriptionFactory.js"
 import { createPublishArea } from "./componentPublishFactory.js"
+import { connectComponents } from "./connections.js"
 
 let count = 1
 const canvas = document.querySelector('.canvas')
-const colors = useColors()
 
 export const ComponentFactory = Object.create(null, {
     init: {
         value: () => {
             const makeComponent = () => {
-
                 const card = document.createElement("section")
                 card.classList = `component component--high`
                 card.draggable = true
@@ -23,26 +20,14 @@ export const ComponentFactory = Object.create(null, {
                 card.ondragover = e => e.preventDefault()
 
                 card.ondrop = e => {
-                    console.log("Listener identified")
-                    // Enabled dropping on targets
                     e.preventDefault()
-
-                    // Determine what's being dropped
                     const details = JSON.parse(e.dataTransfer.getData("details"))
-
-                    // Can only drop cards in column components
-                    let dropTarget = null
-                    if (e.target.className.includes("component")) {
-                        dropTarget = e.target.parentElement
-                    }
 
                     connectComponents(
                         document.getElementById(details.publisher),
                         e.target,
                         details.eventName
                     )
-
-                    // Update task's `column` property
                 }
 
                 card.appendChild(createHeader(card))
@@ -54,63 +39,8 @@ export const ComponentFactory = Object.create(null, {
                 drag(card)
             }
 
-            const connectComponents = (publisher, subscriber, eventName) => {
-                const broker = document.querySelector(".broker")
-                const components = [...document.querySelectorAll(".component")]
-
-                components.forEach(c => {
-
-                    // let randomListener = null
-                    // do {
-                    //     randomListener = [...document.querySelectorAll(".component")].random()
-                    // } while (randomListener === c)
-
-                    const randomColor = colors.random()
-                    const randomEvent = useEvents().random()
-
-                    publisher.style.backgroundImage = 'url(\'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cG9seWdvbiBwb2ludHM9IjI0LDAgMCw4IDgsMTEgMCwxOSA1LDI0IDEzLDE2IDE2LDI0IiBmaWxsPSJjb3JhbCIvPjwvc3ZnPg==\')'
-                    publisher.style.backgroundRepeat = 'no-repeat'
-                    publisher.style.backgroundPosition = "right 2px top 2px"
-                    publisher.style.backgroundSize = "0.75em 0.75em"
-
-                    const outgoing = new LeaderLine(
-                        publisher,
-                        broker,
-                        {
-                            dash: { animation: true },
-                            color: randomColor,
-                            middleLabel: eventName,
-                            hide: true
-                        }
-                    )
-                    const incoming = new LeaderLine(
-                        broker,
-                        subscriber,
-                        {
-                            dash: { animation: true },
-                            color: randomColor,
-                            middleLabel: eventName,
-                            hide: true
-                        }
-                    )
-
-                    publisher.addEventListener("mouseover", e => {
-                        outgoing.show()
-                        incoming.show()
-                    })
-
-                    publisher.addEventListener("mouseout", e => {
-                        outgoing.hide()
-                        incoming.hide()
-                    })
-                })
-            }
-
             const add = document.querySelector("#addComponent")
-            const connect = document.querySelector("#connectThem")
-
             add.addEventListener("click", makeComponent)
-            connect.addEventListener("click", connectComponents)
         }
     }
 })

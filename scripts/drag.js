@@ -1,5 +1,10 @@
+import { reconnectComponents } from "./connections.js"
+
 const canvas = document.querySelector('.canvas')
 
+export const undrag = el => {
+    el.firstElementChild.onmousedown = null
+}
 export const drag = (el) => {
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0
 
@@ -60,6 +65,7 @@ export const drag = (el) => {
         document.onmousemove = null
         canvas.focus()
         canvas.blur()
+        reconnectComponents(el)
     }
 }
 

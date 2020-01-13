@@ -1,5 +1,6 @@
 import { createEventContainer } from "./eventFactory.js"
-import { drag } from "./drag.js"
+import { drag, undrag } from "./drag.js"
+import { useColors } from "./colorProvider.js"
 
 let count = 1
 
@@ -20,8 +21,12 @@ export const createPublishArea = (card) => {
         if (e.keyCode === 13) {
             if (publish.textContent === "") {
                 publish.appendChild(createEventContainer())
+                publish.draggable = false
+                publish.ondragstart = null
+                undrag(publish)
             } else {
                 publish.draggable = true
+
                 publish.ondragstart = e => {
                     const details = {
                         eventName: publish.textContent,
