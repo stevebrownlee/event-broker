@@ -10,7 +10,7 @@ export const reconnectComponents = component => {
 
         let newLine = null
         if (target.publish) {
-            newLine = drawPublisherToBroker(component, target.event, target.color)
+            newLine = drawPublisherToBroker(component.querySelector(".component__publish"), target.event, target.color)
         } else {
             newLine = drawBrokerToSubscriber(component, target.publisher, target.event, target.color)
         }
