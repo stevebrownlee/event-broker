@@ -1,36 +1,32 @@
 import { useColors } from "./colorProvider.js"
 
 const connections = new WeakMap()
-const eventHub = document.querySelector(".container")
 let broker = null
 
 export const reconnectComponents = component => {
-    if (
-        connections.has(component)
-        && connections.get(component).isPublisher
-       ) {
+    const componentEvents = [...component.querySelectorAll(".component__publish")]
 
-        const allPublishedEvents = component.querySelectorAll(".component__publish")
+    for (const eventEl of componentEvents) {
+        if (
+            connections.has(eventEl)
+            && connections.get(eventEl).isPublisher
+        ) {
+            const target = connections.get(eventEl)
+            target.line.remove()
 
-        for (const eventEl of allPublishedEvents) {
-            if (connections.has(eventEl)) {
-                const target = connections.get(eventEl)
-                target.line.remove()
+            eventEl.removeEventListener("mouseout", target.mouseout)
+            eventEl.removeEventListener("mouseover", target.mouseover)
 
-                eventEl.removeEventListener("mouseout", target.mouseout)
-                eventEl.removeEventListener("mouseover", target.mouseover)
+            const { outgoingLine,
+                outgoingMouseOver,
+                outgoingMouseOut } = drawPublisherToBroker(eventEl, target.event, target.color)
+            target.line = outgoingLine
 
-                const { outgoingLine,
-                    outgoingMouseOver,
-                    outgoingMouseOut } = drawPublisherToBroker(eventEl, target.event, target.color)
-                target.line = outgoingLine
+            target.mouseover = outgoingMouseOver
+            eventEl.addEventListener("mouseover", outgoingMouseOver)
 
-                target.mouseover = outgoingMouseOver
-                eventEl.addEventListener("mouseover", outgoingMouseOver)
-
-                target.mouseout = outgoingMouseOut
-                eventEl.addEventListener("mouseout", outgoingMouseOut)
-            }
+            target.mouseout = outgoingMouseOut
+            eventEl.addEventListener("mouseout", outgoingMouseOut)
         }
     }
 
@@ -69,16 +65,10 @@ const drawPublisherToBroker = (publisher, eventName, color) => {
     )
 
     const outgoingMouseOut = e => {
-        try {
-            console.log("outgoingMouseOut")
-            outgoingLine.hide()
-        } catch (error) { }
+        outgoingLine.hide()
     }
     const outgoingMouseOver = e => {
-        try {
-            console.log("outgoingMouseOver")
-            outgoingLine.show()
-        } catch (error) { }
+        outgoingLine.show()
     }
 
     publisher.addEventListener("mouseover", outgoingMouseOver)
@@ -100,16 +90,10 @@ const drawBrokerToSubscriber = (subscriber, publisher, eventName, color) => {
     )
 
     const incomingMouseOut = e => {
-        try {
-            console.log("incomingMouseOut")
-            incomingLine.hide()
-        } catch (error) { }
+        incomingLine.hide()
     }
     const incomingMouseOver = e => {
-        try {
-            console.log("incomingMouseOver")
-            incomingLine.show()
-        } catch (error) { }
+        incomingLine.show()
     }
 
     publisher.addEventListener("mouseover", incomingMouseOver)
