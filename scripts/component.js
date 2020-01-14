@@ -22,12 +22,24 @@ export const ComponentFactory = Object.create(null, {
                 card.ondrop = e => {
                     e.preventDefault()
                     const details = JSON.parse(e.dataTransfer.getData("details"))
+                    const publisher = document.getElementById(details.publisher).parentNode
+                    let component = null
 
-                    connectComponents(
-                        document.getElementById(details.publisher),
-                        e.target,
-                        details.eventName
-                    )
+                    if (e.target !== publisher) {
+                        if (e.target.classList.contains("component")) {
+                            component = e.target
+                        } else if (e.target.parentNode.classList.contains("component")) {
+                            component = e.target.parentNode
+                        }
+                    }
+
+                    if (component !== null) {
+                        connectComponents(
+                            document.getElementById(details.publisher),
+                            e.target,
+                            details.eventName
+                        )
+                    }
                 }
 
                 card.appendChild(createHeader(card))

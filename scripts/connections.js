@@ -6,8 +6,9 @@ let broker = null
 
 export const reconnectComponents = component => {
     if (
-        !connections.has(component) ||
-        (connections.has(component) && connections.get(component).isPublisher)) {
+        connections.has(component)
+        && connections.get(component).isPublisher
+       ) {
 
         const allPublishedEvents = component.querySelectorAll(".component__publish")
 
@@ -24,26 +25,34 @@ export const reconnectComponents = component => {
                     outgoingMouseOut } = drawPublisherToBroker(eventEl, target.event, target.color)
                 target.line = outgoingLine
 
+                target.mouseover = outgoingMouseOver
                 eventEl.addEventListener("mouseover", outgoingMouseOver)
+
+                target.mouseout = outgoingMouseOut
                 eventEl.addEventListener("mouseout", outgoingMouseOut)
             }
         }
     }
 
     if (connections.has(component) && connections.get(component).isSubscriber) {
-        const target = connections.get(component)
-        target.line.remove()
+        const subscriberOptions = connections.get(component)
 
-        component.removeEventListener("mouseout", target.mouseout)
-        component.removeEventListener("mouseover", target.mouseover)
+        subscriberOptions.line.remove()
+
+        subscriberOptions.publisher.removeEventListener("mouseout", subscriberOptions.mouseout)
+        subscriberOptions.publisher.removeEventListener("mouseover", subscriberOptions.mouseover)
 
         const { incomingLine,
             incomingMouseOver,
-            incomingMouseOut } = drawBrokerToSubscriber(component, target.publisher, target.event, target.color)
-        target.line = incomingLine
+            incomingMouseOut } = drawBrokerToSubscriber(component, subscriberOptions.publisher, subscriberOptions.event, subscriberOptions.color)
 
-        component.addEventListener("mouseover", incomingMouseOver)
-        component.addEventListener("mouseout", incomingMouseOut)
+        subscriberOptions.line = incomingLine
+        subscriberOptions.mouseover = incomingMouseOver
+        subscriberOptions.mouseout = incomingMouseOut
+
+
+        subscriberOptions.publisher.addEventListener("mouseover", incomingMouseOver)
+        subscriberOptions.publisher.addEventListener("mouseout", incomingMouseOut)
     }
 }
 
