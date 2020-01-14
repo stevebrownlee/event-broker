@@ -3,54 +3,7 @@ import { useColors } from "./colorProvider.js"
 const connections = new WeakMap()
 let broker = null
 
-export const reconnectComponents = component => {
-    const componentEvents = [...component.querySelectorAll(".component__publish")]
 
-    for (const eventEl of componentEvents) {
-        if (
-            connections.has(eventEl)
-            && connections.get(eventEl).isPublisher
-        ) {
-            const target = connections.get(eventEl)
-            target.line.remove()
-
-            eventEl.removeEventListener("mouseout", target.mouseout)
-            eventEl.removeEventListener("mouseover", target.mouseover)
-
-            const { outgoingLine,
-                outgoingMouseOver,
-                outgoingMouseOut } = drawPublisherToBroker(eventEl, target.event, target.color)
-            target.line = outgoingLine
-
-            target.mouseover = outgoingMouseOver
-            eventEl.addEventListener("mouseover", outgoingMouseOver)
-
-            target.mouseout = outgoingMouseOut
-            eventEl.addEventListener("mouseout", outgoingMouseOut)
-        }
-    }
-
-    if (connections.has(component) && connections.get(component).isSubscriber) {
-        const subscriberOptions = connections.get(component)
-
-        subscriberOptions.line.remove()
-
-        subscriberOptions.publisher.removeEventListener("mouseout", subscriberOptions.mouseout)
-        subscriberOptions.publisher.removeEventListener("mouseover", subscriberOptions.mouseover)
-
-        const { incomingLine,
-            incomingMouseOver,
-            incomingMouseOut } = drawBrokerToSubscriber(component, subscriberOptions.publisher, subscriberOptions.event, subscriberOptions.color)
-
-        subscriberOptions.line = incomingLine
-        subscriberOptions.mouseover = incomingMouseOver
-        subscriberOptions.mouseout = incomingMouseOut
-
-
-        subscriberOptions.publisher.addEventListener("mouseover", incomingMouseOver)
-        subscriberOptions.publisher.addEventListener("mouseout", incomingMouseOut)
-    }
-}
 
 const drawPublisherToBroker = (publisher, eventName, color) => {
     const outgoingLine = new LeaderLine(
@@ -165,16 +118,79 @@ export const connectComponents = (publisher, subscriber, eventName) => {
 
     if (!connections.has(subscriber)) {
         // TODO: Change value to map
+        /*
+            Collection of lines contains the following Maps
+            {
+                line: incomingLine,
+                color: color,
+                publisher: publisher,
+                event: eventName
+            }
+        */
         connections.set(subscriber, {
-            color: color,
-            event: eventName,
             isSubscriber: true,
             isPublisher: false,
-            line: incomingLine,
-            mouseout: incomingMouseOut,
-            mouseover: incomingMouseOver,
-            publisher: publisher
+            lines: new Set()
         })
     }
-    connections.get(subscriber).isSubscriber = true
+
+    const sub = connections.get(subscriber)
+    const subLine = new Map()
+    subLine.set("svg", incomingLine)
+    subLine.set("color", color)
+    subLine.set("event", eventName)
+    subLine.set("publisher", publisher)
+    subLine.set("mouseout", incomingMouseOut)
+    subLine.set("mouseover", incomingMouseOver)
+    sub.lines.add(subLine)
+    sub.isSubscriber = true
+}
+
+export const reconnectComponents = component => {
+    if (connections.has(component) && connections.get(component).isSubscriber) {
+        const lines = [...connections.get(component).lines.values()]
+
+        for (const line of lines) {
+            const publisher = line.get("publisher")
+            line.get("svg").remove()
+            publisher.removeEventListener("mouseout", line.get("mouseout"))
+            publisher.removeEventListener("mouseover", line.get("mouseover"))
+
+            const { incomingLine,
+                incomingMouseOver,
+                incomingMouseOut } = drawBrokerToSubscriber(
+                                                component,
+                                                publisher,
+                                                line.get("event"),
+                                                line.get("color"))
+
+            line.set("svg", incomingLine)
+            line.set("mouseover", incomingMouseOver)
+            line.set("mouseout", incomingMouseOut)
+        }
+    }
+
+    for (const eventEl of component.querySelectorAll(".component__publish")) {
+        if (
+            connections.has(eventEl)
+            && connections.get(eventEl).isPublisher
+        ) {
+            const target = connections.get(eventEl)
+            target.line.remove()
+
+            eventEl.removeEventListener("mouseout", target.mouseout)
+            eventEl.removeEventListener("mouseover", target.mouseover)
+
+            const { outgoingLine,
+                outgoingMouseOver,
+                outgoingMouseOut } = drawPublisherToBroker(eventEl, target.event, target.color)
+            target.line = outgoingLine
+
+            target.mouseover = outgoingMouseOver
+            eventEl.addEventListener("mouseover", outgoingMouseOver)
+
+            target.mouseout = outgoingMouseOut
+            eventEl.addEventListener("mouseout", outgoingMouseOut)
+        }
+    }
 }
