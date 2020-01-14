@@ -3,8 +3,6 @@ import { useColors } from "./colorProvider.js"
 const connections = new WeakMap()
 let broker = null
 
-
-
 const drawPublisherToBroker = (publisher, eventName, color) => {
     const outgoingLine = new LeaderLine(
         publisher,
@@ -92,6 +90,11 @@ export const connectComponents = (publisher, subscriber, eventName) => {
         color = connections.get(publisher).color
     }
 
+    if (subscriber.classList.contains("component__description")
+        || subscriber.classList.contains("component__publish")) {
+        subscriber = subscriber.parentNode
+    }
+
     const {
         incomingLine,
         incomingMouseOver,
@@ -118,15 +121,6 @@ export const connectComponents = (publisher, subscriber, eventName) => {
 
     if (!connections.has(subscriber)) {
         // TODO: Change value to map
-        /*
-            Collection of lines contains the following Maps
-            {
-                line: incomingLine,
-                color: color,
-                publisher: publisher,
-                event: eventName
-            }
-        */
         connections.set(subscriber, {
             isSubscriber: true,
             isPublisher: false,
