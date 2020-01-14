@@ -91,6 +91,7 @@ export const connectComponents = (publisher, subscriber, eventName) => {
     }
 
     if (subscriber.classList.contains("component__description")
+        || subscriber.classList.contains("component__header")
         || subscriber.classList.contains("component__publish")) {
         subscriber = subscriber.parentNode
     }
