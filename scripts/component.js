@@ -23,20 +23,29 @@ export const ComponentFactory = Object.create(null, {
                     e.preventDefault()
                     const details = JSON.parse(e.dataTransfer.getData("details"))
                     const publisher = document.getElementById(details.publisher).parentNode
-                    let component = null
+                    let subscriber = null
 
                     if (e.target !== publisher) {
                         if (e.target.classList.contains("component")) {
-                            component = e.target
-                        } else if (e.target.parentNode.classList.contains("component")) {
-                            component = e.target.parentNode
+                            subscriber = e.target
+                        }
+
+                        if (
+                            e.target.classList.contains("component__description")
+                            || e.target.classList.contains("component__header")
+                            || e.target.classList.contains("component__publish")
+                        ) {
+                            // Can't drop on elements of same component
+                            if (e.target.parentNode !== publisher) {
+                                subscriber = e.target.parentNode
+                            }
                         }
                     }
 
-                    if (component !== null) {
+                    if (subscriber !== null) {
                         connectComponents(
                             document.getElementById(details.publisher),
-                            e.target,
+                            subscriber,
                             details.eventName
                         )
                     }

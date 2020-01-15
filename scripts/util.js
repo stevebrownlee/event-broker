@@ -9,6 +9,18 @@ export const Utils = Object.create(null, {
                     enumerable: true
                 })
             }
+
+            document.addEventListener("touchstart", function (event) {
+                event.preventDefault()
+                var e = new Event("dragstart")
+                element.dispatchEvent(e)
+            }, false)
+
+            document.addEventListener("touchmove", function (event) {
+                event.preventDefault()
+                var e = new Event("drag")
+                element.dispatchEvent(e)
+            }, false)
         }
     }
 })
