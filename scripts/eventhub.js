@@ -5,7 +5,7 @@ export const EventHub = Object.create(null, {
         value: () => {
             const eventHub = document.createElement("div")
             eventHub.className = "broker"
-            eventHub.textContent = "Event Hub"
+            eventHub.textContent = "Hub"
 
             canvas.appendChild(eventHub)
         }

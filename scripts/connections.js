@@ -120,9 +120,12 @@ const drawPublisherToBroker = (publisher, eventName, color) => {
         publisher,
         broker,
         {
-            dash: { animation: true },
+            dash: { animation: true, gap: 10 },
             showEffectName: "draw",
+            path: "fluid",
             color: color,
+            startPlug: "disc",
+            endPlug: "behind",
             middleLabel: eventName,
             hide: true
         }
@@ -140,10 +143,17 @@ const drawPublisherToBroker = (publisher, eventName, color) => {
 const drawBrokerToSubscriber = (subscriber, publisher, eventName, color) => {
     const incomingLine = new LeaderLine(
         broker,
-        subscriber,
+        LeaderLine.areaAnchor(subscriber, {
+            color: "red",
+            dash: true,
+            size: 3,
+            radius: 5,
+            fillColor: "rgba(215, 209, 43, 0.2)"
+        }),
         {
-            dash: { animation: true },
+            dash: { animation: true, gap: 10 },
             color: color,
+            path: "fluid",
             middleLabel: eventName,
             hide: true
         }
