@@ -1,6 +1,5 @@
 import { createEventContainer } from "./eventFactory.js"
 import { drag, undrag } from "./drag.js"
-import { useColors } from "./colorProvider.js"
 
 let count = 1
 
