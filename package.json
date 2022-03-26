@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/stevebrownlee/event-broker#readme",
   "dependencies": {
+    "codemirror": "^5.52.0",
     "leader-line": "^1.0.5",
     "nss-json-server": "^1.0.5"
   }

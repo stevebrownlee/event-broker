@@ -172,7 +172,7 @@ const drawBrokerToSubscriber = (subscriber, publisher, eventName, color) => {
     return { incomingLine, incomingMouseOver, incomingMouseOut }
 };
 
-const canvas = document.querySelector('.canvas');
+const canvas = document.querySelector('.canvas--ui');
 
 const undrag = el => {
     el.firstElementChild.onmousedown = null;

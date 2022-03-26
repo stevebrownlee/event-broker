@@ -2,6 +2,8 @@
 @import './buttons.css';
 @import './component.css';
 @import './broker.css';
+@import '../node_modules/codemirror/lib/codemirror.css';
+@import './editor.css';
 
 *, *:before, *:after
 {
@@ -60,9 +62,18 @@ body
 }
 
 .canvas {
+    position:relative;
+}
+
+.canvas--editor {
+    flex: 1.15;
+    overflow: scroll;
+    background: rgb(166, 172, 203);
+}
+
+.canvas--ui {
     flex: 5;
     background: rgb(237, 237, 229);
-    position:relative;
 }
 
 .header

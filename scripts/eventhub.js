@@ -1,4 +1,4 @@
-const canvas = document.querySelector('.canvas')
+const canvas = document.querySelector('.canvas--ui')
 
 export const EventHub = Object.create(null, {
     init: {
