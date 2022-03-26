@@ -9,7 +9,7 @@ export const createDescription = (card) => {
         description.contentEditable = true
     })
     description.addEventListener("keypress", function (e) {
-        if (e.keyCode === 13) {
+        if (e.key === "Enter") {
             if (e.target.textContent === "") {
                 e.target.textContent = "Resposibility"
             }
